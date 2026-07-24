@@ -288,6 +288,9 @@
   }
   .save-btn:hover{background:#e3f0fb;}
   .save-btn.just-saved{background:var(--teal);color:#fff;}
+  .save-btn.github-btn{color:#24292e;border-color:#24292e;}
+  .save-btn.github-btn:hover{background:#eef0f1;}
+  .save-btn.github-btn.just-saved{background:#24292e;color:#fff;}
   .pdf-btn{
     font-family:'BIZ UDPGothic',sans-serif;font-weight:700;font-size:12.5px;color:#fff;
     background:var(--teal-deep);border:none;border-radius:9px;padding:8px 16px;cursor:pointer;
@@ -393,11 +396,12 @@
       <span><span class="swatch closed"></span>休業日</span>
       <span><span class="swatch open"></span>稼働日</span>
     </div>
-    <button class="save-btn no-print" id="saveBtn">編集内容を保存</button>
+    <button class="save-btn no-print" id="saveBtn">PCに保存</button>
+    <button class="save-btn github-btn no-print" id="githubSaveBtn">GitHubに保存（Web更新）</button>
     <button class="pdf-btn no-print" id="pdfBtn">PDFで書き出す</button>
   </div>
   <p class="pdf-hint no-print">スマホの場合、印刷画面が開いたら共有アイコンや「その他のオプション」から「PDFを作成」「PDFに保存」を選んでください。</p>
-  <p class="save-hint no-print">「編集内容を保存」は、初回だけ保存先ファイルの選択を求められます（今お使いのファイルを選んで上書きしてください）。以降は同じセッション中、同じファイルに直接上書き保存されます。ページを閉じて開き直した際は、再度ファイルの選択が必要です（Safari／Firefoxなど非対応のブラウザでは、これまで通り新しいファイルとしてダウンロードされます）。</p>
+  <p class="save-hint no-print">「PCに保存」はパソコンにファイルとして保存します（Chrome/Edgeなら初回だけ保存先を選べば、以降は同じファイルに上書きされます）。「GitHubに保存」を使うと、パソコンへの保存なしで、公開しているWebページ側の内容を直接更新できます（初回だけリポジトリ情報とトークンの入力が必要です）。</p>
 
   <div class="weekday-settings no-print">
     <span class="label">定休日（曜日で設定）</span>
@@ -800,6 +804,89 @@ document.getElementById('saveBtn').addEventListener('click', async ()=>{
     flashSaveButton('ダウンロードしました ✓');
   }catch(err){
     alert('保存に失敗しました: ' + err.message);
+  }
+});
+
+function getGithubConfig(){
+  let cfg = null;
+  try{ cfg = JSON.parse(localStorage.getItem('nouki_github_config') || 'null'); }catch(e){ cfg = null; }
+  return cfg;
+}
+function setGithubConfig(cfg){
+  localStorage.setItem('nouki_github_config', JSON.stringify(cfg));
+}
+
+async function promptGithubConfig(existing){
+  const owner = prompt('GitHubのユーザー名（例：tetetepoke）', existing?.owner || 'tetetepoke');
+  if (!owner) return null;
+  const repo = prompt('リポジトリ名（例：nouki-calender）', existing?.repo || 'nouki-calender');
+  if (!repo) return null;
+  const path = prompt('リポジトリ内のファイルパス（例：納期予定表_Arch.html）', existing?.path || '納期予定表_Arch.html');
+  if (!path) return null;
+  const token = prompt(
+    'Personal Access Token（GitHub の Settings > Developer settings > Personal access tokens で作成。\n' +
+    'このリポジトリだけに「Contents: Read and write」権限を与えたトークンを推奨します）\n' +
+    '※このトークンはこのブラウザにのみ保存され、GitHubへの通信以外には送信されません。'
+  );
+  if (!token) return null;
+  return { owner, repo, path, token };
+}
+
+document.getElementById('githubSaveBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('githubSaveBtn');
+  let cfg = getGithubConfig();
+  if (!cfg){
+    cfg = await promptGithubConfig(null);
+    if (!cfg) return;
+    setGithubConfig(cfg);
+  }
+
+  const html = buildSaveHtml();
+  const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(cfg.path)}`;
+
+  const original = btn.textContent;
+  btn.textContent = '更新中…';
+
+  try{
+    // Need the current file's SHA to update it
+    const getRes = await fetch(apiUrl, {
+      headers: { 'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json' }
+    });
+    if (!getRes.ok){
+      throw new Error('ファイル情報の取得に失敗しました（' + getRes.status + '）。リポジトリ名・パス・トークンをご確認ください。');
+    }
+    const fileInfo = await getRes.json();
+
+    // UTF-8 safe base64 encoding
+    const base64Content = btoa(unescape(encodeURIComponent(html)));
+
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + cfg.token,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: '納期予定表を更新 (' + new Date().toLocaleString('ja-JP') + ')',
+        content: base64Content,
+        sha: fileInfo.sha
+      })
+    });
+    if (!putRes.ok){
+      const errBody = await putRes.json().catch(()=>({}));
+      throw new Error((errBody.message || ('エラー ' + putRes.status)));
+    }
+
+    btn.textContent = 'GitHubを更新しました ✓';
+    btn.classList.add('just-saved');
+    setTimeout(()=>{ btn.textContent = original; btn.classList.remove('just-saved'); }, 3000);
+  }catch(err){
+    btn.textContent = original;
+    if (confirm('GitHubへの保存に失敗しました：\n' + err.message + '\n\nリポジトリ情報・トークンを入力し直しますか？')){
+      const newCfg = await promptGithubConfig(cfg);
+      if (newCfg) setGithubConfig(newCfg);
+    }
   }
 });
 
