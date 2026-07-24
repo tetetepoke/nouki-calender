@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dental Laboratory Arch | 納期予定カレンダー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16262b;
+    --paper:#f4f8f7;
+    --panel:#ffffff;
+    --line:#d7e2e0;
+    --teal:#0f5c5c;
+    --teal-deep:#0a3d3d;
+    --closed-bg:#e9edf0;
+    --closed-text:#69747c;
+    --closed-border:#cfd7dc;
+    --open-bg:#ffffff;
+    --open-border:#d7e2e0;
+    --a-color:#0f5c5c;
+    --b-color:#2b6cb0;
+    --c-color:#946200;
+    --amber:#b5541c;
+    --today-ring:#e2572c;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:'BIZ UDPGothic','Zen Kaku Gothic New',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+
+  header{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    gap:20px;flex-wrap:wrap;
+    padding-bottom:22px;border-bottom:3px solid var(--teal-deep);margin-bottom:22px;
+  }
+  .brand-mark{display:flex;align-items:center;gap:14px;}
+  .brand-mark .dot{
+    position:relative;width:44px;height:44px;border-radius:11px;
+    background:linear-gradient(150deg,var(--teal),var(--teal-deep));
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+    color:#eafcf6;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:19px;
+    box-shadow:0 4px 10px rgba(10,61,61,.25);flex:none;cursor:pointer;
+  }
+  .brand-mark .dot img{width:100%;height:100%;object-fit:cover;}
+  .brand-mark .dot input[type=file]{display:none;}
+  .brand-mark .dot .logo-hint{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(10,61,61,.82);color:#fff;font-size:8.5px;font-weight:700;
+    opacity:0;transition:.15s;text-align:center;line-height:1.3;
+  }
+  .brand-mark .dot:hover .logo-hint{opacity:1;}
+  .brand-text .eyebrow{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;
+    color:var(--teal);text-transform:uppercase;margin:0 0 3px;outline:none;
+  }
+  .brand-text h1{margin:0;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:25px;color:var(--teal-deep);outline:none;}
+  .brand-sub{font-size:12px;color:#5c6b6b;margin-top:4px;outline:none;}
+  .brand-text [contenteditable]:focus{background:#f4f8f7;border-radius:4px;}
+  .brand-text [contenteditable]:empty::before{content:attr(data-placeholder);color:#a8b3b3;}
+
+  .controls{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:14px 20px;margin-bottom:16px;
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;
+    box-shadow:0 1px 2px rgba(10,40,40,.03);
+  }
+  .month-nav{display:flex;align-items:center;gap:10px;}
+  .nav-btn{
+    width:36px;height:36px;border-radius:10px;border:1px solid var(--line);
+    background:#fff;cursor:pointer;font-size:16px;color:var(--teal-deep);
+    display:flex;align-items:center;justify-content:center;transition:.15s;
+  }
+  .nav-btn:hover{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .month-select{display:flex;align-items:baseline;gap:6px;}
+  .month-select select{
+    font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;font-size:20px;color:var(--teal-deep);
+    border:none;background:transparent;cursor:pointer;appearance:none;padding:2px 4px;
+  }
+  .month-select .unit{font-size:13px;color:#5c6b6b;}
+
+  .settings{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .setting-item{
+    display:flex;align-items:center;gap:6px;font-size:12px;color:#5c6b6b;
+    background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:6px 10px;
+  }
+  .setting-item .tag{
+    width:19px;height:19px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;
+    font-family:'Space Mono',monospace;font-weight:700;font-size:10px;color:#fff;
+  }
+  .tag.a{background:var(--a-color);} .tag.b{background:var(--b-color);} .tag.c{background:var(--c-color);}
+  .setting-item input{
+    width:32px;border:none;background:transparent;font-family:'Space Mono',monospace;
+    font-weight:700;font-size:13px;color:var(--ink);text-align:center;
+  }
+  .legend{display:flex;gap:14px;font-size:11px;color:#5c6b6b;align-items:center;}
+  .legend .swatch{width:12px;height:12px;border-radius:4px;display:inline-block;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.08);}
+  .swatch.closed{background:var(--closed-bg);border-color:var(--closed-border);}
+  .swatch.open{background:var(--open-bg);border-color:var(--open-border);}
+
+  /* ---------- Add holiday panel ---------- */
+
+  .weekday-settings{
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:12px 20px;margin-bottom:22px;
+  }
+  .weekday-settings .label{font-size:12px;font-weight:700;color:var(--teal-deep);white-space:nowrap;margin-right:4px;}
+  .wd-toggle{
+    width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--paper);
+    font-family:'BIZ UDPGothic',sans-serif;font-size:13px;font-weight:700;color:var(--ink);
+    cursor:pointer;transition:.15s;
+  }
+  .wd-toggle.active{background:var(--closed-text);border-color:var(--closed-text);color:#fff;}
+  .wd-toggle.sun{color:#c0442c;} .wd-toggle.sun.active{background:#c0442c;border-color:#c0442c;color:#fff;}
+  .wd-toggle.sat{color:#2b6cb0;} .wd-toggle.sat.active{background:#2b6cb0;border-color:#2b6cb0;color:#fff;}
+  .weekday-settings .hint{font-size:11px;color:#5c6b6b;margin-left:6px;}
+
+  .add-panel{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:14px 20px;margin-bottom:22px;
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  }
+  .add-panel .label{font-size:12px;font-weight:700;color:var(--teal-deep);white-space:nowrap;}
+  .add-panel input[type=date], .add-panel input[type=text]{
+    font-family:'BIZ UDPGothic',sans-serif;font-size:13px;border:1px solid var(--line);
+    border-radius:8px;padding:7px 10px;background:var(--paper);color:var(--ink);
+  }
+  .add-panel input[type=text]{width:180px;}
+  .add-btn{
+    font-family:'BIZ UDPGothic',sans-serif;font-weight:700;font-size:13px;color:#fff;
+    background:var(--teal);border:none;border-radius:8px;padding:8px 16px;cursor:pointer;transition:.15s;
+  }
+  .add-btn:hover{background:var(--teal-deep);}
+  .custom-list{display:flex;gap:8px;flex-wrap:wrap;width:100%;margin-top:2px;}
+  .custom-chip{
+    display:inline-flex;align-items:center;gap:6px;background:#fbeadd;color:var(--amber);
+    border:1px solid #edcda9;border-radius:99px;padding:4px 6px 4px 12px;font-size:11.5px;font-weight:700;
+  }
+  .custom-chip button{
+    border:none;background:rgba(181,84,28,.15);color:var(--amber);width:18px;height:18px;border-radius:50%;
+    cursor:pointer;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;
+  }
+
+  /* ---------- Calendar grid ---------- */
+  .weekday-row{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:8px;}
+  .weekday-row div{
+    text-align:center;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:#5c6b6b;text-transform:uppercase;padding:2px 0;
+  }
+  .weekday-row div.sun{color:#c0442c;}
+  .weekday-row div.sat{color:#2b6cb0;}
+
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+  .cell{
+    min-height:142px;border-radius:12px;border:1px solid var(--open-border);background:var(--open-bg);
+    padding:8px 8px 7px;display:flex;flex-direction:column;position:relative;
+    box-shadow:0 1px 2px rgba(10,40,40,.03);
+  }
+  .cell.blank{background:transparent;border:1px dashed #e2e8e8;box-shadow:none;}
+  .cell.closed{background:var(--closed-bg);border-color:var(--closed-border);}
+  .cell.today{box-shadow:0 0 0 2px var(--today-ring);}
+  .date-block{display:contents;}
+  .day-body{display:contents;}
+  .cell .mobile-wd{display:none;}
+
+  .cell .dnum{
+    font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:16px;line-height:1;color:var(--ink);
+  }
+  .cell.closed .dnum{color:var(--closed-text);}
+  .cell .reason{
+    margin-top:4px;font-size:10px;font-weight:700;color:var(--closed-text);line-height:1.3;
+  }
+  .cell .reason.named{color:var(--amber);}
+
+  .abc-line{
+    margin-top:auto;padding-top:6px;display:flex;flex-direction:column;gap:2px;
+  }
+  .abc-line .row{display:flex;align-items:baseline;gap:6px;font-family:'Space Mono',monospace;font-size:12.5px;}
+  .abc-line .tag{
+    width:17px;height:17px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:10px;font-weight:700;color:#fff;flex:none;
+  }
+  .abc-line .tag.a{background:var(--a-color);} .abc-line .tag.b{background:var(--b-color);} .abc-line .tag.c{background:var(--c-color);}
+  .abc-line .val{color:var(--ink);font-weight:700;}
+
+  .foot-note{
+    margin-top:20px;font-size:11.5px;color:#6d7a7a;line-height:1.9;
+    background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:14px 18px;
+  }
+  .foot-note b{color:var(--teal-deep);}
+
+  @media screen and (max-width:760px){
+    .wrap{padding:16px 12px 60px;}
+    header{padding-bottom:16px;margin-bottom:16px;gap:12px;}
+    .memo-box{width:100%;}
+    .brand-text h1{font-size:20px;}
+    .brand-mark .dot{width:38px;height:38px;}
+    .abc-summary{flex-direction:column;}
+    .abc-summary-item{flex:1 1 auto;min-width:0;}
+    .controls{flex-direction:column;align-items:stretch;gap:12px;padding:14px 16px;}
+    .month-nav{justify-content:center;}
+    .month-select select{font-size:18px;}
+    .legend{justify-content:center;}
+    .pdf-btn{width:100%;padding:12px 16px;font-size:14px;}
+    .save-btn{width:100%;padding:12px 16px;font-size:14px;}
+    .weekday-settings{padding:12px 16px;}
+    .wd-toggle{width:32px;height:32px;}
+    .add-panel{flex-direction:column;align-items:stretch;}
+    .add-panel input[type=date], .add-panel input[type=text]{width:100%;}
+    .add-btn{width:100%;padding:10px;}
+    .pdf-hint{display:block;}
+  }
+
+  @media screen and (max-width:600px){
+    .weekday-row{display:none;}
+    .cal-grid{display:flex;flex-direction:column;gap:8px;}
+    .cell.blank{display:none;}
+    .cell{
+      min-height:0;flex-direction:row;align-items:flex-start;gap:12px;
+      padding:10px 12px;border-radius:10px;
+    }
+    .cell .date-block{display:flex;flex-direction:column;align-items:center;min-width:34px;flex:none;}
+    .cell .dnum{font-size:16px;}
+    .cell .mobile-wd{display:block;font-size:10px;color:#7c8a8a;font-family:'Space Mono',monospace;}
+    .day-body{flex:1 1 auto;min-width:0;}
+    .cell .reason{margin-top:0;font-size:12px;}
+    .abc-line{margin-top:0;flex-direction:row;flex-wrap:wrap;gap:10px;padding-top:0;}
+    .abc-line .row{font-size:11px;}
+    .abc-line .tag{width:15px;height:15px;font-size:9px;}
+  }
+
+  .abc-summary{
+    display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-start;
+  }
+  .abc-summary-item{
+    display:flex;flex-direction:column;gap:6px;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:10px 14px;flex:1 1 220px;min-width:200px;
+  }
+  .abc-summary-item .item-head{
+    display:flex;align-items:center;gap:8px;
+  }
+  .abc-summary-item .tag{
+    width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+    font-family:'Space Mono',monospace;font-weight:700;font-size:11px;color:#fff;flex:none;
+  }
+  .abc-summary-item .item-list{
+    flex:1 1 auto;font-size:12.5px;font-weight:500;color:var(--ink);outline:none;
+    padding:1px 4px 0;white-space:pre-wrap;line-height:20px;
+    min-height:20px;margin-top:6px;
+    background-image:repeating-linear-gradient(to bottom, transparent 0, transparent 19px, #a7b4b4 19px, #a7b4b4 20px);
+    background-size:100% 20px;background-position:0 1px;background-repeat:repeat-y;
+  }
+  .abc-summary-item .item-list:focus{background-image:repeating-linear-gradient(to bottom, transparent 0, transparent 19px, var(--teal) 19px, var(--teal) 20px);}
+  .abc-summary-item .item-list:empty::before{content:attr(data-placeholder);color:#a8b3b3;font-weight:400;}
+  .abc-summary-item .cnt-wrap{
+    font-size:12px;color:#5c6b6b;white-space:nowrap;flex:none;margin-left:auto;
+  }
+  .abc-summary-item .cnt-wrap input{
+    width:30px;border:none;border-bottom:1px solid var(--line);background:transparent;
+    font-family:'Space Mono',monospace;font-weight:700;font-size:13px;color:var(--ink);text-align:center;
+    -moz-appearance:textfield;padding:0 2px;line-height:1.4;
+  }
+  .abc-summary-item .cnt-wrap input::-webkit-outer-spin-button,
+  .abc-summary-item .cnt-wrap input::-webkit-inner-spin-button{
+    -webkit-appearance:none;margin:0;
+  }
+  .abc-summary-item .del-btn{
+    flex:none;width:20px;height:20px;border-radius:50%;border:none;background:#f1e4e4;color:#b5541c;
+    font-size:12px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  }
+  .abc-summary-item .del-btn:hover{background:#f6d3c9;}
+  .add-item-btn{
+    font-family:'BIZ UDPGothic',sans-serif;font-weight:700;font-size:12px;color:var(--teal-deep);
+    background:#fff;border:1px dashed var(--teal);border-radius:9px;padding:7px 14px;cursor:pointer;
+    margin-bottom:16px;transition:.15s;
+  }
+  .add-item-btn:hover{background:#e3f0fb;}
+  .save-btn{
+    font-family:'BIZ UDPGothic',sans-serif;font-weight:700;font-size:12.5px;color:var(--teal-deep);
+    background:#fff;border:1.5px solid var(--teal);border-radius:9px;padding:8px 16px;cursor:pointer;
+    transition:.15s;white-space:nowrap;
+  }
+  .save-btn:hover{background:#e3f0fb;}
+  .save-btn.just-saved{background:var(--teal);color:#fff;}
+  .pdf-btn{
+    font-family:'BIZ UDPGothic',sans-serif;font-weight:700;font-size:12.5px;color:#fff;
+    background:var(--teal-deep);border:none;border-radius:9px;padding:8px 16px;cursor:pointer;
+    transition:.15s;white-space:nowrap;
+  }
+  .pdf-btn:hover{background:var(--teal);}
+  .pdf-hint{display:none;font-size:11px;color:#5c6b6b;margin:-8px 0 16px;line-height:1.6;}
+  .save-hint{font-size:11px;color:#5c6b6b;margin:-8px 0 16px;line-height:1.6;}
+  .print-title{display:none;}
+  .memo-box{
+    border:1px dashed var(--line);border-radius:10px;padding:12px 16px;color:var(--ink);
+    min-height:110px;max-height:150px;overflow:hidden;font-size:12.5px;line-height:1.7;background:var(--panel);
+    outline:none;width:600px;flex:1 1 480px;max-width:680px;
+  }
+  .memo-box:empty::before{
+    content:attr(data-placeholder);color:#a8b3b3;
+  }
+  .memo-box:focus{border-color:var(--teal);}
+
+  @media print{
+    @page{ size:A4 landscape; margin:8mm; }
+    *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;}
+    html,body{height:auto;}
+    body{background:#fff;}
+    .wrap{
+      max-width:none;width:281mm;padding:0;margin:0;
+    }
+    .no-print{display:none !important;}
+    header{border-bottom-color:var(--teal-deep);margin-bottom:6px;padding-bottom:6px;}
+    .brand-mark .dot{width:30px;height:30px;font-size:13px;}
+    .brand-text h1{font-size:17px;}
+    .brand-sub{font-size:9px;}
+    .memo-box{width:130mm;min-height:0;max-height:30mm;font-size:9.5px;padding:7px 11px;line-height:1.55;}
+    .abc-summary{margin-bottom:6px;gap:8px;flex-wrap:nowrap;}
+    .abc-summary-item{flex:1 1 0;min-width:0;}
+    .abc-summary-item{padding:4px 10px;max-height:22mm;overflow:hidden;}
+    .abc-summary-item .tag{width:16px;height:16px;font-size:8px;}
+    .abc-summary-item .item-list{
+      font-size:9px;line-height:13px;padding:1px 3px 0;max-height:15mm;overflow:hidden;margin-top:4px;
+      background-image:repeating-linear-gradient(to bottom, transparent 0, transparent 12px, #a7b4b4 12px, #a7b4b4 13px);
+      background-size:100% 13px;background-position:0 1px;background-repeat:repeat-y;
+    }
+    .abc-summary-item .cnt-wrap{font-size:9.5px;}
+    .abc-summary-item .cnt-wrap input{border-bottom:none;width:22px;}
+    .print-title{
+      display:block;margin:0 0 6px;font-family:'Zen Kaku Gothic New',sans-serif;
+      font-weight:900;font-size:17px;color:var(--teal-deep);
+    }
+    .weekday-row{margin-bottom:4px;}
+    .cal-grid{
+      height:118mm;display:grid;
+      grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(6,1fr);gap:7px;
+      page-break-inside:avoid;
+    }
+    .cell{
+      min-height:0;padding:4px 6px 3px;overflow:hidden;box-shadow:none;border-width:1px;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    }
+    .cell .dnum{font-size:13px;line-height:1.1;}
+    .cell .reason{font-size:9.5px;line-height:1.25;}
+    .abc-line{padding-top:2px;gap:1px;}
+    .abc-line{gap:2px;}
+    .abc-line .row{font-size:9.5px;line-height:1.2;}
+    .abc-line .tag{width:13px;height:13px;font-size:8px;}
+    .memo-box:empty::before{content:"";}
+  }
+
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand-mark">
+      <div class="dot" id="logoDot" title="クリックしてロゴ画像を追加">
+        <span id="logoLetter">Ａ</span>
+        <input type="file" id="logoInput" accept="image/*" class="no-print">
+        <span class="logo-hint no-print">＋ロゴ</span>
+      </div>
+      <div class="brand-text">
+        <p class="eyebrow" contenteditable="true" data-placeholder="カテゴリ・部門名など">Dental Laboratory Arch</p>
+        <h1 contenteditable="true" data-placeholder="タイトルを入力">納期予定カレンダー</h1>
+        <p class="brand-sub" contenteditable="true" data-placeholder="住所・電話番号など">〒683-0006 鳥取県米子市車尾 6-8-25　TEL/FAX 0859-21-8064</p>
+      </div>
+    </div>
+    <div class="memo-box" id="memoBox" contenteditable="true" data-placeholder="ここにメモを入力できます"></div>
+  </header>
+
+  <div class="abc-summary" id="abcSummary"></div>
+  <button class="add-item-btn no-print" id="addItemBtn">＋ 品目を追加</button>
+
+  <div class="controls no-print">
+    <div class="month-nav">
+      <button class="nav-btn" id="prevBtn" aria-label="前の月">‹</button>
+      <div class="month-select">
+        <select id="yearSel"></select><span class="unit">年</span>
+        <select id="monthSel"></select><span class="unit">月</span>
+      </div>
+      <button class="nav-btn" id="nextBtn" aria-label="次の月">›</button>
+    </div>
+    <div class="legend">
+      <span><span class="swatch closed"></span>休業日</span>
+      <span><span class="swatch open"></span>稼働日</span>
+    </div>
+    <button class="save-btn no-print" id="saveBtn">編集内容を保存</button>
+    <button class="pdf-btn no-print" id="pdfBtn">PDFで書き出す</button>
+  </div>
+  <p class="pdf-hint no-print">スマホの場合、印刷画面が開いたら共有アイコンや「その他のオプション」から「PDFを作成」「PDFに保存」を選んでください。</p>
+  <p class="save-hint no-print">「編集内容を保存」は、初回だけ保存先ファイルの選択を求められます（今お使いのファイルを選んで上書きしてください）。以降は同じセッション中、同じファイルに直接上書き保存されます。ページを閉じて開き直した際は、再度ファイルの選択が必要です（Safari／Firefoxなど非対応のブラウザでは、これまで通り新しいファイルとしてダウンロードされます）。</p>
+
+  <div class="weekday-settings no-print">
+    <span class="label">定休日（曜日で設定）</span>
+    <button class="wd-toggle sun" data-dow="0">日</button>
+    <button class="wd-toggle" data-dow="1">月</button>
+    <button class="wd-toggle" data-dow="2">火</button>
+    <button class="wd-toggle" data-dow="3">水</button>
+    <button class="wd-toggle" data-dow="4">木</button>
+    <button class="wd-toggle" data-dow="5">金</button>
+    <button class="wd-toggle sat" data-dow="6">土</button>
+    <span class="hint">選んだ曜日は毎週自動で休業日になり、納期A/B/Cの計算からも除外されます（カレンダー表示は消えません）。初期設定は日曜のみです。</span>
+  </div>
+
+  <div class="add-panel no-print">
+    <span class="label">＋ 休業日を追加</span>
+    <input type="date" id="newDate">
+    <input type="text" id="newReason" placeholder="内容（例：臨時休業）">
+    <button class="add-btn" id="addHolidayBtn">追加する</button>
+    <div class="custom-list" id="customList"></div>
+  </div>
+
+  <h2 class="print-title" id="printTitle"></h2>
+
+  <div class="weekday-row">
+    <div class="sun">日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div class="sat">土</div>
+  </div>
+  <div class="cal-grid" id="grid"></div>
+
+</div>
+
+
+<script>
+const BASE_HOLIDAYS = {"2026-01-01": "元日", "2026-01-04": "", "2026-01-11": "", "2026-01-12": "成人の日", "2026-01-18": "", "2026-01-25": "", "2026-02-01": "", "2026-02-08": "", "2026-02-11": "建国記念の日", "2026-02-15": "", "2026-02-22": "", "2026-02-23": "天皇誕生日", "2026-03-01": "", "2026-03-08": "", "2026-03-15": "", "2026-03-20": "春分の日", "2026-03-22": "", "2026-03-29": "", "2026-04-05": "", "2026-04-12": "", "2026-04-19": "", "2026-04-26": "", "2026-04-29": "昭和の日", "2026-05-03": "憲法記念日", "2026-05-04": "みどりの日", "2026-05-05": "こどもの日", "2026-05-06": "休日", "2026-05-10": "", "2026-05-17": "", "2026-05-24": "", "2026-05-31": "", "2026-06-07": "", "2026-06-14": "", "2026-06-21": "", "2026-06-28": "", "2026-07-05": "", "2026-07-12": "", "2026-07-19": "", "2026-07-20": "海の日", "2026-07-26": "", "2026-08-02": "", "2026-08-09": "", "2026-08-11": "山の日", "2026-08-16": "", "2026-08-23": "", "2026-08-30": "", "2026-09-06": "", "2026-09-13": "", "2026-09-20": "", "2026-09-21": "敬老の日", "2026-09-22": "休日", "2026-09-23": "秋分の日", "2026-09-27": "", "2026-10-04": "", "2026-10-11": "", "2026-10-12": "スポーツの日", "2026-10-18": "", "2026-10-25": "", "2026-11-01": "", "2026-11-03": "文化の日", "2026-11-08": "", "2026-11-15": "", "2026-11-22": "", "2026-11-23": "勤労感謝の日", "2026-11-29": "", "2026-12-06": "", "2026-12-13": "", "2026-12-20": "", "2026-12-27": "", "2027-01-01": "元日", "2027-01-03": "", "2027-01-10": "", "2027-01-11": "成人の日", "2027-01-17": "", "2027-01-24": "", "2027-01-31": "", "2027-02-07": "", "2027-02-11": "建国記念の日", "2027-02-14": "", "2027-02-21": "", "2027-02-23": "天皇誕生日", "2027-02-28": "", "2027-03-07": "", "2027-03-14": "", "2027-03-21": "春分の日", "2027-03-22": "休日", "2027-03-28": "", "2027-04-04": "", "2027-04-11": "", "2027-04-18": "", "2027-04-25": "", "2027-04-29": "昭和の日", "2027-05-02": "", "2027-05-03": "憲法記念日", "2027-05-04": "みどりの日", "2027-05-05": "こどもの日", "2027-05-09": "", "2027-05-16": "", "2027-05-23": "", "2027-05-30": "", "2027-06-06": "", "2027-06-13": "", "2027-06-20": "", "2027-06-27": "", "2027-07-04": "", "2027-07-11": "", "2027-07-18": "", "2027-07-19": "海の日", "2027-07-25": "", "2027-08-01": "", "2027-08-08": "", "2027-08-11": "山の日", "2027-08-15": "", "2027-08-22": "", "2027-08-29": "", "2027-09-05": "", "2027-09-12": "", "2027-09-19": "", "2027-09-20": "敬老の日", "2027-09-23": "秋分の日", "2027-09-26": "", "2027-10-03": "", "2027-10-10": "", "2027-10-11": "スポーツの日", "2027-10-17": "", "2027-10-24": "", "2027-10-31": "", "2027-11-03": "文化の日", "2027-11-07": "", "2027-11-14": "", "2027-11-21": "", "2027-11-23": "勤労感謝の日", "2027-11-28": "", "2027-12-05": "", "2027-12-12": "", "2027-12-19": "", "2027-12-26": "", "2028-01-01": "元日", "2028-01-02": "", "2028-01-09": "", "2028-01-10": "成人の日", "2028-01-16": "", "2028-01-23": "", "2028-01-30": "", "2028-02-06": "", "2028-02-11": "建国記念の日", "2028-02-13": "", "2028-02-20": "", "2028-02-23": "天皇誕生日", "2028-02-27": "", "2028-03-05": "", "2028-03-12": "", "2028-03-19": "", "2028-03-20": "春分の日", "2028-03-26": "", "2028-04-02": "", "2028-04-09": "", "2028-04-16": "", "2028-04-23": "", "2028-04-29": "昭和の日", "2028-04-30": "", "2028-05-03": "憲法記念日", "2028-05-04": "みどりの日", "2028-05-05": "こどもの日", "2028-05-07": "", "2028-05-14": "", "2028-05-21": "", "2028-05-28": "", "2028-06-04": "", "2028-06-11": "", "2028-06-18": "", "2028-06-25": "", "2028-07-02": "", "2028-07-09": "", "2028-07-16": "", "2028-07-17": "海の日", "2028-07-23": "", "2028-07-30": "", "2028-08-06": "", "2028-08-11": "山の日", "2028-08-13": "", "2028-08-20": "", "2028-08-27": "", "2028-09-03": "", "2028-09-10": "", "2028-09-17": "", "2028-09-18": "敬老の日", "2028-09-22": "秋分の日", "2028-09-24": "", "2028-10-01": "", "2028-10-08": "", "2028-10-09": "スポーツの日", "2028-10-15": "", "2028-10-22": "", "2028-10-29": "", "2028-11-03": "文化の日", "2028-11-05": "", "2028-11-12": "", "2028-11-19": "", "2028-11-23": "勤労感謝の日", "2028-11-26": "", "2028-12-03": "", "2028-12-10": "", "2028-12-17": "", "2028-12-24": "", "2028-12-31": "", "2029-01-01": "元日", "2029-01-07": "", "2029-01-08": "成人の日", "2029-01-14": "", "2029-01-21": "", "2029-01-28": "", "2029-02-04": "", "2029-02-11": "建国記念の日", "2029-02-12": "休日", "2029-02-18": "", "2029-02-23": "天皇誕生日", "2029-02-25": "", "2029-03-04": "", "2029-03-11": "", "2029-03-18": "", "2029-03-20": "春分の日", "2029-03-25": "", "2029-04-01": "", "2029-04-08": "", "2029-04-15": "", "2029-04-22": "", "2029-04-29": "昭和の日", "2029-04-30": "休日", "2029-05-03": "憲法記念日", "2029-05-04": "みどりの日", "2029-05-05": "こどもの日", "2029-05-06": "", "2029-05-13": "", "2029-05-20": "", "2029-05-27": "", "2029-06-03": "", "2029-06-10": "", "2029-06-17": "", "2029-06-24": "", "2029-07-01": "", "2029-07-08": "", "2029-07-15": "", "2029-07-16": "海の日", "2029-07-22": "", "2029-07-29": "", "2029-08-05": "", "2029-08-11": "山の日", "2029-08-12": "", "2029-08-19": "", "2029-08-26": "", "2029-09-02": "", "2029-09-09": "", "2029-09-16": "", "2029-09-17": "敬老の日", "2029-09-23": "秋分の日", "2029-09-24": "休日", "2029-09-30": "", "2029-10-07": "", "2029-10-08": "スポーツの日", "2029-10-14": "", "2029-10-21": "", "2029-10-28": "", "2029-11-03": "文化の日", "2029-11-04": "", "2029-11-11": "", "2029-11-18": "", "2029-11-23": "勤労感謝の日", "2029-11-25": "", "2029-12-02": "", "2029-12-09": "", "2029-12-16": "", "2029-12-23": "", "2029-12-30": "", "2030-01-01": "元日", "2030-01-06": "", "2030-01-13": "", "2030-01-14": "成人の日", "2030-01-20": "", "2030-01-27": "", "2030-02-03": "", "2030-02-10": "", "2030-02-11": "建国記念の日", "2030-02-17": "", "2030-02-23": "天皇誕生日", "2030-02-24": "", "2030-03-03": "", "2030-03-10": "", "2030-03-17": "", "2030-03-20": "春分の日", "2030-03-24": "", "2030-03-31": "", "2030-04-07": "", "2030-04-14": "", "2030-04-21": "", "2030-04-28": "", "2030-04-29": "昭和の日", "2030-05-03": "憲法記念日", "2030-05-04": "みどりの日", "2030-05-05": "こどもの日", "2030-05-06": "休日", "2030-05-12": "", "2030-05-19": "", "2030-05-26": "", "2030-06-02": "", "2030-06-09": "", "2030-06-16": "", "2030-06-23": "", "2030-06-30": "", "2030-07-07": "", "2030-07-14": "", "2030-07-15": "海の日", "2030-07-21": "", "2030-07-28": "", "2030-08-04": "", "2030-08-11": "山の日", "2030-08-12": "休日", "2030-08-18": "", "2030-08-25": "", "2030-09-01": "", "2030-09-08": "", "2030-09-15": "", "2030-09-16": "敬老の日", "2030-09-22": "", "2030-09-23": "秋分の日", "2030-09-29": "", "2030-10-06": "", "2030-10-13": "", "2030-10-14": "スポーツの日", "2030-10-20": "", "2030-10-27": "", "2030-11-03": "文化の日", "2030-11-04": "休日", "2030-11-10": "", "2030-11-17": "", "2030-11-23": "勤労感謝の日", "2030-11-24": "", "2030-12-01": "", "2030-12-08": "", "2030-12-15": "", "2030-12-22": "", "2030-12-29": ""}
+;
+let customHolidays = {};
+
+const WD = ["日","月","火","水","木","金","土"];
+const today = new Date();
+const todayKey = today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+
+function fmtKey(y,m,d){ return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0"); }
+function allHolidays(){ return Object.assign({}, BASE_HOLIDAYS, customHolidays); }
+let weeklyClosed = new Set([0]); // default: Sunday(0) only
+
+// Is this day one where WE (the lab) cannot receive a new case? Controls the cell's
+// grey/"休業日" display. Governed fully by the weekday toggles + holiday list.
+function isReceivingClosed(y,m,d,map){
+  const dt = new Date(y, m-1, d);
+  if(weeklyClosed.has(dt.getDay())) return true;
+  return Object.prototype.hasOwnProperty.call(map, fmtKey(y,m,d));
+}
+// Is this day one that must be skipped when counting forward to a delivery date?
+// Explicit holidays/company closures always skip (nobody is working/shipping).
+// A weekly closure only skips it here if it's NOT Saturday — the client receives
+// on Saturdays even though the lab itself is closed, so Saturday must stay eligible
+// as a delivery date regardless of the weekday toggle.
+function isDeliverySkip(y,m,d,map){
+  const dt = new Date(y, m-1, d);
+  if(Object.prototype.hasOwnProperty.call(map, fmtKey(y,m,d))) return true;
+  const dow = dt.getDay();
+  return weeklyClosed.has(dow) && dow !== 6;
+}
+function reasonOf(y,m,d,map){ return map[fmtKey(y,m,d)] || ""; }
+function addBusinessDays(y,m,d,n,map){
+  let dt = new Date(y, m-1, d);
+  let count = 0;
+  while(count < n){
+    dt.setDate(dt.getDate()+1);
+    if(!isDeliverySkip(dt.getFullYear(), dt.getMonth()+1, dt.getDate(), map)) count++;
+  }
+  return dt;
+}
+function daysInMonth(y,m){ return new Date(y,m,0).getDate(); }
+
+const yearSel = document.getElementById('yearSel');
+const monthSel = document.getElementById('monthSel');
+for(let y=2026;y<=2030;y++){ const o=document.createElement('option'); o.value=y; o.textContent=y; yearSel.appendChild(o); }
+for(let m=1;m<=12;m++){ const o=document.createElement('option'); o.value=m; o.textContent=m; monthSel.appendChild(o); }
+yearSel.value = 2026;
+monthSel.value = 8;
+
+const ITEM_COLORS = ['#0f5c5c','#2b6cb0','#946200','#7c3aed','#b5541c','#0e7490','#a3183d','#4d7c0f'];
+let items = [
+  { label:'A', color:ITEM_COLORS[0], name:'（4歯まで）インプラント上部構造・天然歯ZR 完成　プロビ・ガイドプロビ　ポジショニングトレー　咬合床　バイトテーブル　診断用ワックスアップ　アバットメントトライ　排列トライ', count:12 },
+  { label:'B', color:ITEM_COLORS[1], name:'（5歯以上）インプラント上部構造（カスタムアバットメント）　天然歯ZR 完成　デンチャー関係（試適・完成）', count:16 },
+  { label:'C', color:ITEM_COLORS[2], name:'フルマウス完成\nSMOP', count:20 },
+];
+
+function nextLabel(){
+  // A..Z, then AA, AB... (plenty of headroom in practice)
+  const used = new Set(items.map(it=>it.label));
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for(const ch of alphabet){ if(!used.has(ch)) return ch; }
+  let i=0;
+  while(true){
+    const label = alphabet[i % 26] + alphabet[Math.floor(i/26) % 26];
+    if(!used.has(label)) return label;
+    i++;
+  }
+}
+
+function renderSummary(){
+  const el = document.getElementById('abcSummary');
+  el.innerHTML = "";
+  items.forEach((it, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'abc-summary-item';
+
+    const head = document.createElement('div');
+    head.className = 'item-head';
+
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.style.background = it.color;
+    tag.textContent = it.label;
+    head.appendChild(tag);
+
+    const cntWrap = document.createElement('span');
+    cntWrap.className = 'cnt-wrap';
+    const cntInput = document.createElement('input');
+    cntInput.type = 'text'; cntInput.inputMode = 'numeric'; cntInput.pattern = '[0-9]*'; cntInput.maxLength = 2;
+    cntInput.value = it.count;
+    cntInput.addEventListener('input', ()=>{
+      cntInput.value = cntInput.value.replace(/[^0-9]/g,'');
+      it.count = parseInt(cntInput.value,10) || 1;
+      render();
+    });
+    cntWrap.appendChild(document.createTextNode('中'));
+    cntWrap.appendChild(cntInput);
+    cntWrap.appendChild(document.createTextNode('日'));
+    head.appendChild(cntWrap);
+
+    if(items.length > 1){
+      const del = document.createElement('button');
+      del.className = 'del-btn no-print';
+      del.textContent = '×';
+      del.setAttribute('aria-label', it.label + 'を削除');
+      del.addEventListener('click', ()=>{
+        items.splice(idx,1);
+        renumberLabels();
+        renderSummary();
+        render();
+      });
+      head.appendChild(del);
+    }
+
+    card.appendChild(head);
+
+    const list = document.createElement('div');
+    list.className = 'item-list';
+    list.contentEditable = 'true';
+    list.setAttribute('data-placeholder','品目名を入力（複数可・改行で区切り）');
+    list.innerText = it.name;
+    list.addEventListener('input', ()=>{ it.name = list.innerText.replace(/\n+$/,''); });
+    card.appendChild(list);
+
+    el.appendChild(card);
+  });
+}
+
+function renumberLabels(){
+  // keep labels tidy (A, B, C...) after a deletion, without touching names/colors/counts
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  items.forEach((it,i)=>{ it.label = alphabet[i] || ('X'+i); });
+}
+
+document.getElementById('addItemBtn').addEventListener('click', ()=>{
+  const color = ITEM_COLORS[items.length % ITEM_COLORS.length];
+  items.push({ label: nextLabel(), color, name:'', count:14 });
+  renderSummary();
+  render();
+});
+
+function renderCustomList(){
+  const el = document.getElementById('customList');
+  el.innerHTML = "";
+  Object.keys(customHolidays).sort().forEach(key=>{
+    const chip = document.createElement('span');
+    chip.className = 'custom-chip';
+    chip.innerHTML = `${key}　${customHolidays[key]||"休業日"} `;
+    const btn = document.createElement('button');
+    btn.textContent = "×";
+    btn.addEventListener('click', ()=>{ delete customHolidays[key]; renderCustomList(); render(); });
+    chip.appendChild(btn);
+    el.appendChild(chip);
+  });
+}
+
+document.getElementById('addHolidayBtn').addEventListener('click', ()=>{
+  const dateVal = document.getElementById('newDate').value;
+  const reasonVal = document.getElementById('newReason').value.trim();
+  if(!dateVal){ document.getElementById('newDate').focus(); return; }
+  customHolidays[dateVal] = reasonVal || "臨時休業";
+  document.getElementById('newReason').value = "";
+  renderCustomList();
+  const [yy,mm] = dateVal.split('-').map(Number);
+  yearSel.value = yy; monthSel.value = mm;
+  render();
+});
+
+function render(){
+  const y = parseInt(yearSel.value,10);
+  const m = parseInt(monthSel.value,10);
+  const map = allHolidays();
+  const n = daysInMonth(y,m);
+  const firstWeekday = new Date(y,m-1,1).getDay();
+
+  document.getElementById('printTitle').textContent = y + "年" + m + "月";
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = "";
+
+  for(let i=0;i<firstWeekday;i++){
+    const blank = document.createElement('div');
+    blank.className = 'cell blank';
+    grid.appendChild(blank);
+  }
+
+  for(let d=1; d<=n; d++){
+    const closed = isReceivingClosed(y,m,d,map);
+    const reason = reasonOf(y,m,d,map);
+    const key = fmtKey(y,m,d);
+
+    const cell = document.createElement('div');
+    cell.className = 'cell ' + (closed?'closed':'open') + (key===todayKey?' today':'');
+
+    const dateBlock = document.createElement('div');
+    dateBlock.className = 'date-block';
+    const dnum = document.createElement('div');
+    dnum.className = 'dnum';
+    dnum.textContent = d;
+    dateBlock.appendChild(dnum);
+    const mwd = document.createElement('div');
+    mwd.className = 'mobile-wd';
+    mwd.textContent = WD[new Date(y,m-1,d).getDay()];
+    dateBlock.appendChild(mwd);
+    cell.appendChild(dateBlock);
+
+    const body = document.createElement('div');
+    body.className = 'day-body';
+
+    if(closed){
+      const r = document.createElement('div');
+      r.className = 'reason' + (reason?' named':'');
+      r.textContent = reason || "休業日";
+      body.appendChild(r);
+    } else {
+      const abc = document.createElement('div');
+      abc.className = 'abc-line';
+      items.forEach(it=>{
+        const dt = addBusinessDays(y,m,d,it.count,map);
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = `<span class="tag" style="background:${it.color}">${it.label}</span><span class="val">${dt.getMonth()+1}/${dt.getDate()}</span><span>(${WD[dt.getDay()]})</span>`;
+        abc.appendChild(row);
+      });
+      body.appendChild(abc);
+    }
+    cell.appendChild(body);
+
+    grid.appendChild(cell);
+  }
+
+  const totalCells = firstWeekday + n;
+  const trailing = 42 - totalCells; // always pad out to a fixed 6 rows so print layout height is consistent
+  for(let i=0;i<trailing;i++){
+    const blank = document.createElement('div');
+    blank.className = 'cell blank';
+    grid.appendChild(blank);
+  }
+}
+
+renderSummary();
+
+const logoDot = document.getElementById('logoDot');
+const logoInput = document.getElementById('logoInput');
+logoDot.addEventListener('click', ()=>{ logoInput.click(); });
+logoInput.addEventListener('change', ()=>{
+  const file = logoInput.files && logoInput.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    const letter = logoDot.querySelector('#logoLetter');
+    if(letter) letter.remove();
+    let img = logoDot.querySelector('img');
+    if(!img){
+      img = document.createElement('img');
+      logoDot.insertBefore(img, logoDot.firstChild);
+    }
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+['change'].forEach(evt=>{
+  yearSel.addEventListener(evt, render);
+  monthSel.addEventListener(evt, render);
+});
+document.getElementById('prevBtn').addEventListener('click', ()=>{
+  let y=parseInt(yearSel.value,10), m=parseInt(monthSel.value,10);
+  m--; if(m<1){m=12;y--;}
+  if(y<2026){y=2026;m=1;}
+  yearSel.value=y; monthSel.value=m; render();
+});
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  let y=parseInt(yearSel.value,10), m=parseInt(monthSel.value,10);
+  m++; if(m>12){m=1;y++;}
+  if(y>2030){y=2030;m=12;}
+  yearSel.value=y; monthSel.value=m; render();
+});
+
+document.querySelectorAll('.wd-toggle').forEach(btn=>{
+  const dow = parseInt(btn.getAttribute('data-dow'),10);
+  if(weeklyClosed.has(dow)) btn.classList.add('active');
+  btn.addEventListener('click', ()=>{
+    if(weeklyClosed.has(dow)){ weeklyClosed.delete(dow); btn.classList.remove('active'); }
+    else { weeklyClosed.add(dow); btn.classList.add('active'); }
+    render();
+  });
+});
+
+document.getElementById('pdfBtn').addEventListener('click', ()=>{
+  window.print();
+});
+
+let savedFileHandle = null;
+
+function buildSaveHtml(){
+  let html = document.documentElement.outerHTML;
+
+  html = html.replace(
+    /let items = \[[\s\S]*?\n\];/,
+    'let items = ' + JSON.stringify(items, null, 2) + ';'
+  );
+  html = html.replace(
+    /let weeklyClosed = new Set\(\[[^\]]*\]\);[^\n]*/,
+    'let weeklyClosed = new Set(' + JSON.stringify(Array.from(weeklyClosed)) + ');'
+  );
+  html = html.replace(
+    /let customHolidays = \{.*?\};/,
+    'let customHolidays = ' + JSON.stringify(customHolidays) + ';'
+  );
+  html = html.replace(/yearSel\.value = \d+;/, 'yearSel.value = ' + yearSel.value + ';');
+  html = html.replace(/monthSel\.value = \d+;/, 'monthSel.value = ' + monthSel.value + ';');
+
+  return '<!DOCTYPE html>\n' + html;
+}
+
+function downloadHtml(html){
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '納期予定表_Arch.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function flashSaveButton(label){
+  const btn = document.getElementById('saveBtn');
+  const original = btn.dataset.originalLabel || btn.textContent;
+  btn.dataset.originalLabel = original;
+  btn.textContent = label;
+  btn.classList.add('just-saved');
+  setTimeout(()=>{ btn.textContent = original; btn.classList.remove('just-saved'); }, 2400);
+}
+
+document.getElementById('saveBtn').addEventListener('click', async ()=>{
+  const html = buildSaveHtml();
+
+  // Chrome/Edge: File System Access API lets us overwrite the SAME file on disk directly,
+  // instead of downloading a brand new file every time.
+  if ('showSaveFilePicker' in window){
+    try{
+      if (!savedFileHandle){
+        savedFileHandle = await window.showSaveFilePicker({
+          suggestedName: '納期予定表_Arch.html',
+          types: [{ description: 'HTML ファイル', accept: {'text/html': ['.html']} }]
+        });
+      }
+      const writable = await savedFileHandle.createWritable();
+      await writable.write(html);
+      await writable.close();
+      flashSaveButton('保存しました ✓');
+      return;
+    }catch(err){
+      if (err && err.name === 'AbortError'){
+        return; // user cancelled the file picker — do nothing
+      }
+      // any other error (e.g. not permitted in this context) — fall through to download
+      savedFileHandle = null;
+    }
+  }
+
+  // Fallback for browsers without File System Access API support (e.g. Firefox, Safari)
+  try{
+    downloadHtml(html);
+    flashSaveButton('ダウンロードしました ✓');
+  }catch(err){
+    alert('保存に失敗しました: ' + err.message);
+  }
+});
+
+render();
+</script>
+</body>
+</html>
