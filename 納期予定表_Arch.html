@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dental Laboratory Arch | 納期予定カレンダー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&amp;family=Zen+Kaku+Gothic+New:wght@500;700;900&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#16262b;
@@ -380,15 +379,15 @@
     <div class="memo-box" id="memoBox" contenteditable="true" data-placeholder="ここにメモを入力できます"></div>
   </header>
 
-  <div class="abc-summary" id="abcSummary"></div>
+  <div class="abc-summary" id="abcSummary"><div class="abc-summary-item"><div class="item-head"><span class="tag" style="background: rgb(15, 92, 92);">A</span><span class="cnt-wrap">中<input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2">日</span><button class="del-btn no-print" aria-label="Aを削除">×</button></div><div class="item-list" contenteditable="true" data-placeholder="品目名を入力（複数可・改行で区切り）">（4歯まで）インプラント上部構造・天然歯ZR 完成　プロビ・ガイドプロビ　ポジショニングトレー　咬合床　バイトテーブル　診断用ワックスアップ　アバットメントトライ　排列トライ</div></div><div class="abc-summary-item"><div class="item-head"><span class="tag" style="background: rgb(43, 108, 176);">B</span><span class="cnt-wrap">中<input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2">日</span><button class="del-btn no-print" aria-label="Bを削除">×</button></div><div class="item-list" contenteditable="true" data-placeholder="品目名を入力（複数可・改行で区切り）">（5歯以上）インプラント上部構造（カスタムアバットメント）　天然歯ZR 完成　デンチャー関係（試適・完成）</div></div><div class="abc-summary-item"><div class="item-head"><span class="tag" style="background: rgb(148, 98, 0);">C</span><span class="cnt-wrap">中<input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2">日</span><button class="del-btn no-print" aria-label="Cを削除">×</button></div><div class="item-list" contenteditable="true" data-placeholder="品目名を入力（複数可・改行で区切り）">フルマウス完成<br>SMOP</div></div></div>
   <button class="add-item-btn no-print" id="addItemBtn">＋ 品目を追加</button>
 
   <div class="controls no-print">
     <div class="month-nav">
       <button class="nav-btn" id="prevBtn" aria-label="前の月">‹</button>
       <div class="month-select">
-        <select id="yearSel"></select><span class="unit">年</span>
-        <select id="monthSel"></select><span class="unit">月</span>
+        <select id="yearSel"><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select><span class="unit">年</span>
+        <select id="monthSel"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select><span class="unit">月</span>
       </div>
       <button class="nav-btn" id="nextBtn" aria-label="次の月">›</button>
     </div>
@@ -405,13 +404,13 @@
 
   <div class="weekday-settings no-print">
     <span class="label">定休日（曜日で設定）</span>
-    <button class="wd-toggle sun" data-dow="0">日</button>
+    <button class="wd-toggle sun active" data-dow="0">日</button>
     <button class="wd-toggle" data-dow="1">月</button>
     <button class="wd-toggle" data-dow="2">火</button>
     <button class="wd-toggle" data-dow="3">水</button>
     <button class="wd-toggle" data-dow="4">木</button>
     <button class="wd-toggle" data-dow="5">金</button>
-    <button class="wd-toggle sat" data-dow="6">土</button>
+    <button class="wd-toggle sat active" data-dow="6">土</button>
     <span class="hint">選んだ曜日は毎週自動で休業日になり、納期A/B/Cの計算からも除外されます（カレンダー表示は消えません）。初期設定は日曜のみです。</span>
   </div>
 
@@ -423,12 +422,12 @@
     <div class="custom-list" id="customList"></div>
   </div>
 
-  <h2 class="print-title" id="printTitle"></h2>
+  <h2 class="print-title" id="printTitle">2026年8月</h2>
 
   <div class="weekday-row">
     <div class="sun">日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div class="sat">土</div>
   </div>
-  <div class="cal-grid" id="grid"></div>
+  <div class="cal-grid" id="grid"><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell closed"><div class="date-block"><div class="dnum">1</div><div class="mobile-wd">土</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">2</div><div class="mobile-wd">日</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell open"><div class="date-block"><div class="dnum">3</div><div class="mobile-wd">月</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/18</span><span>(火)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">8/22</span><span>(土)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">8/27</span><span>(木)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">4</div><div class="mobile-wd">火</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/19</span><span>(水)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">8/24</span><span>(月)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">8/28</span><span>(金)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">5</div><div class="mobile-wd">水</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/20</span><span>(木)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">8/25</span><span>(火)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">8/29</span><span>(土)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">6</div><div class="mobile-wd">木</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/21</span><span>(金)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">8/26</span><span>(水)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">8/31</span><span>(月)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">7</div><div class="mobile-wd">金</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/22</span><span>(土)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">8/27</span><span>(木)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/1</span><span>(火)</span></div></div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">8</div><div class="mobile-wd">土</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">9</div><div class="mobile-wd">日</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell open"><div class="date-block"><div class="dnum">10</div><div class="mobile-wd">月</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/25</span><span>(火)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">8/29</span><span>(土)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/3</span><span>(木)</span></div></div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">11</div><div class="mobile-wd">火</div></div><div class="day-body"><div class="reason named">山の日</div></div></div><div class="cell open"><div class="date-block"><div class="dnum">12</div><div class="mobile-wd">水</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/26</span><span>(水)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">8/31</span><span>(月)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/4</span><span>(金)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">13</div><div class="mobile-wd">木</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/27</span><span>(木)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/1</span><span>(火)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/5</span><span>(土)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">14</div><div class="mobile-wd">金</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/28</span><span>(金)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/2</span><span>(水)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/7</span><span>(月)</span></div></div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">15</div><div class="mobile-wd">土</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">16</div><div class="mobile-wd">日</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell open"><div class="date-block"><div class="dnum">17</div><div class="mobile-wd">月</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">8/31</span><span>(月)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/4</span><span>(金)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/9</span><span>(水)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">18</div><div class="mobile-wd">火</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/1</span><span>(火)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/5</span><span>(土)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/10</span><span>(木)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">19</div><div class="mobile-wd">水</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/2</span><span>(水)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/7</span><span>(月)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/11</span><span>(金)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">20</div><div class="mobile-wd">木</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/3</span><span>(木)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/8</span><span>(火)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/12</span><span>(土)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">21</div><div class="mobile-wd">金</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/4</span><span>(金)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/9</span><span>(水)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/14</span><span>(月)</span></div></div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">22</div><div class="mobile-wd">土</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">23</div><div class="mobile-wd">日</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell open"><div class="date-block"><div class="dnum">24</div><div class="mobile-wd">月</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/7</span><span>(月)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/11</span><span>(金)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/16</span><span>(水)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">25</div><div class="mobile-wd">火</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/8</span><span>(火)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/12</span><span>(土)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/17</span><span>(木)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">26</div><div class="mobile-wd">水</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/9</span><span>(水)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/14</span><span>(月)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/18</span><span>(金)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">27</div><div class="mobile-wd">木</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/10</span><span>(木)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/15</span><span>(火)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/19</span><span>(土)</span></div></div></div></div><div class="cell open"><div class="date-block"><div class="dnum">28</div><div class="mobile-wd">金</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/11</span><span>(金)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/16</span><span>(水)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/24</span><span>(木)</span></div></div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">29</div><div class="mobile-wd">土</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell closed"><div class="date-block"><div class="dnum">30</div><div class="mobile-wd">日</div></div><div class="day-body"><div class="reason">休業日</div></div></div><div class="cell open"><div class="date-block"><div class="dnum">31</div><div class="mobile-wd">月</div></div><div class="day-body"><div class="abc-line"><div class="row"><span class="tag" style="background:#0f5c5c">A</span><span class="val">9/14</span><span>(月)</span></div><div class="row"><span class="tag" style="background:#2b6cb0">B</span><span class="val">9/18</span><span>(金)</span></div><div class="row"><span class="tag" style="background:#946200">C</span><span class="val">9/26</span><span>(土)</span></div></div></div></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div></div>
 
 </div>
 
@@ -444,7 +443,7 @@ const todayKey = today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"
 
 function fmtKey(y,m,d){ return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0"); }
 function allHolidays(){ return Object.assign({}, BASE_HOLIDAYS, customHolidays); }
-let weeklyClosed = new Set([0]); // default: Sunday(0) only
+let weeklyClosed = new Set([0,6]);
 
 // Is this day one where WE (the lab) cannot receive a new case? Controls the cell's
 // grey/"休業日" display. Governed fully by the weekday toggles + holiday list.
@@ -485,9 +484,24 @@ monthSel.value = 8;
 
 const ITEM_COLORS = ['#0f5c5c','#2b6cb0','#946200','#7c3aed','#b5541c','#0e7490','#a3183d','#4d7c0f'];
 let items = [
-  { label:'A', color:ITEM_COLORS[0], name:'（4歯まで）インプラント上部構造・天然歯ZR 完成　プロビ・ガイドプロビ　ポジショニングトレー　咬合床　バイトテーブル　診断用ワックスアップ　アバットメントトライ　排列トライ', count:12 },
-  { label:'B', color:ITEM_COLORS[1], name:'（5歯以上）インプラント上部構造（カスタムアバットメント）　天然歯ZR 完成　デンチャー関係（試適・完成）', count:16 },
-  { label:'C', color:ITEM_COLORS[2], name:'フルマウス完成\nSMOP', count:20 },
+  {
+    "label": "A",
+    "color": "#0f5c5c",
+    "name": "（4歯まで）インプラント上部構造・天然歯ZR 完成　プロビ・ガイドプロビ　ポジショニングトレー　咬合床　バイトテーブル　診断用ワックスアップ　アバットメントトライ　排列トライ",
+    "count": 12
+  },
+  {
+    "label": "B",
+    "color": "#2b6cb0",
+    "name": "（5歯以上）インプラント上部構造（カスタムアバットメント）　天然歯ZR 完成　デンチャー関係（試適・完成）",
+    "count": 16
+  },
+  {
+    "label": "C",
+    "color": "#946200",
+    "name": "フルマウス完成\nSMOP",
+    "count": 20
+  }
 ];
 
 function nextLabel(){
@@ -892,5 +906,6 @@ document.getElementById('githubSaveBtn').addEventListener('click', async ()=>{
 
 render();
 </script>
-</body>
-</html>
+
+
+</body></html>
