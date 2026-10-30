@@ -315,8 +315,10 @@
     html,body{height:auto;}
     body{background:#fff;}
     .wrap{
-      max-width:none;width:281mm;padding:0;margin:0;
+      max-width:none;width:281mm;height:192mm;padding:0;margin:0;
+      display:flex;flex-direction:column;overflow:hidden;
     }
+    .wrap > *{flex:none;}
     .no-print{display:none !important;}
     header{border-bottom-color:var(--teal-deep);margin-bottom:6px;padding-bottom:6px;}
     .brand-mark .dot{width:30px;height:30px;font-size:13px;}
@@ -325,36 +327,40 @@
     .memo-box{width:130mm;min-height:0;max-height:30mm;font-size:9.5px;padding:7px 11px;line-height:1.55;}
     .abc-summary{margin-bottom:6px;gap:8px;flex-wrap:nowrap;}
     .abc-summary-item{flex:1 1 0;min-width:0;}
-    .abc-summary-item{padding:4px 10px;max-height:22mm;overflow:hidden;}
+    .abc-summary-item{padding:4px 10px;gap:2px;}
     .abc-summary-item .tag{width:16px;height:16px;font-size:8px;}
     .abc-summary-item .item-list{
-      font-size:9px;line-height:13px;padding:1px 3px 0;max-height:15mm;overflow:hidden;margin-top:4px;
-      background-image:repeating-linear-gradient(to bottom, transparent 0, transparent 12px, #a7b4b4 12px, #a7b4b4 13px);
-      background-size:100% 13px;background-position:0 1px;background-repeat:repeat-y;
+      font-size:8.5px;line-height:12px;padding:1px 3px 0;min-height:12px;margin-top:2px;
+      background-image:repeating-linear-gradient(to bottom, transparent 0, transparent 11px, #a7b4b4 11px, #a7b4b4 12px);
+      background-size:100% 12px;background-position:0 1px;background-repeat:repeat-y;
     }
     .abc-summary-item .cnt-wrap{font-size:9.5px;}
     .abc-summary-item .cnt-wrap input{border-bottom:none;width:22px;}
     .print-title{
-      display:block;margin:0 0 6px;font-family:'Zen Kaku Gothic New',sans-serif;
+      display:block;margin:0 0 3px;font-family:'Zen Kaku Gothic New',sans-serif;
       font-weight:900;font-size:17px;color:var(--teal-deep);
     }
     .weekday-row{margin-bottom:4px;}
     .cal-grid{
-      height:118mm;display:grid;
-      grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(6,1fr);gap:7px;
+      flex:1 1 auto !important;min-height:0;height:auto;display:grid;
+      grid-template-columns:repeat(7,minmax(0,1fr));
+      grid-template-rows:repeat(var(--weeks,6),minmax(0,1fr));gap:5px;
       page-break-inside:avoid;
     }
     .cell{
-      min-height:0;padding:4px 6px 3px;overflow:hidden;box-shadow:none;border-width:1px;
+      min-height:0;padding:3px 6px 2px;overflow:hidden;box-shadow:none;border-width:1px;
       -webkit-print-color-adjust:exact;print-color-adjust:exact;
     }
-    .cell .dnum{font-size:13px;line-height:1.1;}
+    .cell .dnum{font-size:12px;line-height:1.1;}
     .cell .reason{font-size:9.5px;line-height:1.25;}
-    .abc-line{padding-top:2px;gap:1px;}
-    .abc-line{gap:2px;}
-    .abc-line .row{font-size:9.5px;line-height:1.2;}
-    .abc-line .tag{width:13px;height:13px;font-size:8px;}
+    .abc-line{padding-top:1px;gap:0;}
+    .abc-line .row{font-size:9px;line-height:11px;gap:4px;align-items:center;}
+    .abc-line .tag{width:11px;height:11px;font-size:7px;border-radius:3px;}
     .memo-box:empty::before{content:"";}
+    /* 5週以下の月はマスに余裕があるので文字を少し大きく */
+    .cal-grid[data-weeks="4"] .cell .dnum, .cal-grid[data-weeks="5"] .cell .dnum{font-size:14px;}
+    .cal-grid[data-weeks="4"] .abc-line .row, .cal-grid[data-weeks="5"] .abc-line .row{font-size:10.5px;line-height:13px;}
+    .cal-grid[data-weeks="4"] .abc-line .tag, .cal-grid[data-weeks="5"] .abc-line .tag{width:12px;height:12px;font-size:8px;}
   }
 
   :focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
@@ -709,7 +715,10 @@ function render(){
   }
 
   const totalCells = firstWeekday + n;
-  const trailing = 42 - totalCells; // always pad out to a fixed 6 rows so print layout height is consistent
+  const weeks = Math.ceil(totalCells / 7);
+  grid.style.setProperty('--weeks', weeks);
+  grid.dataset.weeks = weeks; // print layout splits the height evenly across the weeks actually used
+  const trailing = weeks * 7 - totalCells;
   for(let i=0;i<trailing;i++){
     const blank = document.createElement('div');
     blank.className = 'cell blank';
@@ -933,6 +942,7 @@ document.getElementById('githubSaveBtn').addEventListener('click', async ()=>{
   }
 });
 
+renderCustomList(); // 保存済みHTMLの休業日チップは×ボタンが効かない静的なものなので、起動時に作り直す
 render();
 </script>
 
